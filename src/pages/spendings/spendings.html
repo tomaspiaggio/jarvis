@@ -1,0 +1,19 @@
+<ion-header>
+  <ion-navbar>
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>Spendings</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <button ion-item *ngFor="let element of elements" (click)="itemTapped($event, item)">
+      {{element.name}}
+      <div class="item-note" item-end>
+        ${{element.amount}}
+      </div>
+    </button>
+  </ion-list>
+</ion-content>
