@@ -5,7 +5,18 @@
 </ion-header>
 
 <ion-content>
-  <div *ngIf="selectedItem" padding>
-    LOGIN
-  </div>
+  <ion-list inset>
+
+    <ion-item>
+      <ion-label>Email</ion-label>
+      <ion-input type="text" #email></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Password</ion-label>
+      <ion-input type="password" #password></ion-input>
+    </ion-item>
+
+    <button ion-button full (click)="login(email.value, password.value)">Login</button>
+  </ion-list>
 </ion-content>

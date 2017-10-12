@@ -3,6 +3,7 @@ import {NativeStorage} from "@ionic-native/native-storage";
 import {Spending} from "../model/spending.model";
 import {Observable} from "rxjs";
 import {EncryptedHttpService} from "./encrypted-http.service";
+import {URLBuilderService} from "./url-builder.service";
 /**
  * Created by Tomas on 10/10/17.
  */
@@ -11,7 +12,8 @@ import {EncryptedHttpService} from "./encrypted-http.service";
 export class SpendingService {
 
   constructor(private http: EncryptedHttpService,
-              private storage: NativeStorage) {
+              private storage: NativeStorage,
+              private urlBuilder: URLBuilderService) {
   }
 
   /**
@@ -27,10 +29,10 @@ export class SpendingService {
       this.storage.getItem(dateKey)
         .then((elements) => {
           const spendingArray = this.toSpendingArray(elements);
-          observer.next(elements);
+          observer.next(spendingArray);
           current = elements;
         }).catch(err => console.log(err));
-      this.http.get('https://spendings-cda7b.firebaseio.com/spendings/.json', {dateKey: dateKey}, {'Content-Type': 'application/json'})
+      this.http.get(this.urlBuilder.buildURL('spendings'), {dateKey: dateKey}, {'Content-Type': 'application/json'})
         .then((response) => {
           const spendingArray = this.toSpendingArray(response);
           observer.next(spendingArray);
@@ -48,7 +50,7 @@ export class SpendingService {
   public add(key: Date, spending: Spending): Promise<any> {
     return new Promise((resolve, reject) => {
       const dateKey = this.dateToKey(key);
-      this.http.post('https://spendings-cda7b.firebaseio.com/spendings/' + dateKey + '/.json',
+      this.http.post(this.urlBuilder.buildURL('spendings/' + dateKey),
         JSON.stringify({amount: spending.amount, name: spending.name, additionalInfo: spending.additionalInfo}),
         {'Content-Type': 'application/json'})
         .then(response => {
@@ -85,7 +87,7 @@ export class SpendingService {
           this.storage.setItem(dateKey, spendingArray)
             .catch(err => reject(err));
         }).catch(err => reject(err));
-      this.http.delete('https://spendings-cda7b.firebaseio.com/spendings/' + dateKey + '/' + spending.id + '/.json',
+      this.http.delete(this.urlBuilder.buildURL('spendings/' + dateKey + '/' + spending.id),
         {},
         {'Content-Type': 'application/json'})
         .catch(err => reject(err));

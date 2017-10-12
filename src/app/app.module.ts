@@ -12,6 +12,8 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import {NativeStorage} from "@ionic-native/native-storage";
 import {HTTP} from "@ionic-native/http";
 import {LoginPage} from "../pages/login/login";
+import {URLBuilderService} from "./services/url-builder.service";
+import {EncryptedHttpService} from "./services/encrypted-http.service";
 // declare var JSEncrypt: any;
 
 @NgModule({
@@ -39,6 +41,8 @@ import {LoginPage} from "../pages/login/login";
     SplashScreen,
     NativeStorage,
     HTTP,
+    URLBuilderService,
+    EncryptedHttpService,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]
 })

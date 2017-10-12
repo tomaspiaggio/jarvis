@@ -39,8 +39,8 @@ export class MyApp {
       // Here you can do any higher level native things you might need.
       this.statusBar.styleDefault();
       this.splashScreen.hide();
-      if (!this.nativeStorage.getItem('user'))
-        this.nav.setRoot(LoginPage);
+      this.nativeStorage.getItem('user')
+        .catch(() => this.nav.setRoot(LoginPage));
     });
   }
 

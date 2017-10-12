@@ -9,17 +9,36 @@ declare var JSEncrypt: any;
 @Injectable()
 export class EncryptedHttpService {
 
-  private decrypt = new JSEncrypt();
-  private encrypt = new JSEncrypt();
+  private server;
+  private mine;
 
   constructor(private http: HTTP,
               private nativeStorage: NativeStorage) {
-    this.nativeStorage.getItem('keys')
+    /**
+     * Tries to get user's private key and if it does not find one, it creates a keypair
+     */
+    this.nativeStorage.getItem('my-key')
       .then(pk => {
         const keys = JSON.parse(pk);
-        this.decrypt.setPrivateKey(keys.private);
-        this.encrypt.setPublicKey(keys.public);
-      }).catch(err => console.log(err));
+        this.mine.setPrivateKey(keys.privateKey);
+        this.mine.setPublicKey(keys.publicKey);
+      }).catch(() => {
+        this.mine = new JSEncrypt();
+        this.nativeStorage.setItem('my-key', {privateKey: this.mine.getPrivateKey(), publicKey: this.mine.getPublicKey()})
+          .catch(err => console.log(err));
+    });
+
+    /**
+     * Gets server keys (should be here from login response)
+     */
+    this.nativeStorage.getItem('server-key')
+      .then(keys => {
+        const parsed = JSON.parse(keys);
+        this.server.setPublicKey(parsed.publicKey);
+        this.server.setPrivateKey(parsed.privateKey);
+      }).catch(() => {
+      throw new Error('No server keys found')
+    });
   }
 
   /**
@@ -32,7 +51,7 @@ export class EncryptedHttpService {
   public get(url: string, parameters: any, headers: any): Promise<EncryptedHttpresponse> {
     return new Promise<EncryptedHttpresponse>((resolve, reject) => {
       this.http.get(url, parameters, headers)
-        .then((encrypted: HTTPResponse) => resolve(new EncryptedHttpresponse(encrypted.status, encrypted.headers, this.decrypt.decrypt(encrypted.data))))
+        .then((encrypted: HTTPResponse) => resolve(new EncryptedHttpresponse(encrypted.status, encrypted.headers, this.server.decrypt(encrypted.data))))
         .catch((err: HTTPResponse) => reject(err.error));
     });
   }
@@ -46,8 +65,8 @@ export class EncryptedHttpService {
    */
   public post(url: string, body: any, headers: any): Promise<EncryptedHttpresponse> {
     return new Promise<EncryptedHttpresponse>((resolve, reject) => {
-      this.http.post(url, JSON.stringify({data: this.encrypt.encrypt(body)}), headers)
-        .then((encrypted: HTTPResponse) => resolve(new EncryptedHttpresponse(encrypted.status, encrypted.headers, this.decrypt.decrypt(encrypted.data))))
+      this.http.post(url, JSON.stringify({data: this.mine.encrypt(body)}), headers)
+        .then((encrypted: HTTPResponse) => resolve(new EncryptedHttpresponse(encrypted.status, encrypted.headers, this.server.decrypt(encrypted.data))))
         .catch((err: HTTPResponse) => reject(err.error));
     });
   }
@@ -61,8 +80,8 @@ export class EncryptedHttpService {
    */
   public put(url: string, body: any, headers: any): Promise<EncryptedHttpresponse> {
     return new Promise<EncryptedHttpresponse>((resolve, reject) => {
-      this.http.put(url, JSON.stringify({data: this.encrypt.encrypt(body)}), headers)
-        .then((encrypted: HTTPResponse) => resolve(new EncryptedHttpresponse(encrypted.status, encrypted.headers, this.decrypt.decrypt(encrypted.data))))
+      this.http.put(url, JSON.stringify({data: this.mine.encrypt(body)}), headers)
+        .then((encrypted: HTTPResponse) => resolve(new EncryptedHttpresponse(encrypted.status, encrypted.headers, this.server.decrypt(encrypted.data))))
         .catch((err: HTTPResponse) => reject(err.error));
     });
   }
@@ -77,7 +96,7 @@ export class EncryptedHttpService {
   public delete(url: string, parameters: any, headers: any): Promise<EncryptedHttpresponse> {
     return new Promise<EncryptedHttpresponse>((resolve, reject) => {
       this.http.delete(url, parameters, headers)
-        .then((encrypted: HTTPResponse) => resolve(new EncryptedHttpresponse(encrypted.status, encrypted.headers, this.decrypt.decrypt(encrypted.data))))
+        .then((encrypted: HTTPResponse) => resolve(new EncryptedHttpresponse(encrypted.status, encrypted.headers, this.server.decrypt(encrypted.data))))
         .catch((err: HTTPResponse) => reject(err.error));
     });
   }
