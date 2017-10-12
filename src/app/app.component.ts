@@ -6,6 +6,8 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { HomePage } from '../pages/home/home';
 import { ListPage } from '../pages/list/list';
 import {SpendingsComponent} from "../pages/spendings/spendings";
+import {NativeStorage} from "@ionic-native/native-storage";
+import {LoginPage} from "../pages/login/login";
 
 @Component({
   templateUrl: 'app.html'
@@ -17,7 +19,10 @@ export class MyApp {
 
   pages: Array<{title: string, component: any}>;
 
-  constructor(public platform: Platform, public statusBar: StatusBar, public splashScreen: SplashScreen) {
+  constructor(public platform: Platform,
+              public statusBar: StatusBar,
+              public splashScreen: SplashScreen,
+              private nativeStorage: NativeStorage) {
     this.initializeApp();
 
     // used for an example of ngFor and navigation
@@ -34,6 +39,8 @@ export class MyApp {
       // Here you can do any higher level native things you might need.
       this.statusBar.styleDefault();
       this.splashScreen.hide();
+      if (!this.nativeStorage.getItem('user'))
+        this.nav.setRoot(LoginPage);
     });
   }
 

@@ -11,6 +11,7 @@ import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import {NativeStorage} from "@ionic-native/native-storage";
 import {HTTP} from "@ionic-native/http";
+import {LoginPage} from "../pages/login/login";
 // declare var JSEncrypt: any;
 
 @NgModule({
@@ -18,7 +19,8 @@ import {HTTP} from "@ionic-native/http";
     MyApp,
     HomePage,
     ListPage,
-    SpendingsComponent
+    SpendingsComponent,
+    LoginPage
   ],
   imports: [
     BrowserModule,
@@ -29,7 +31,8 @@ import {HTTP} from "@ionic-native/http";
     MyApp,
     HomePage,
     ListPage,
-    SpendingsComponent
+    SpendingsComponent,
+    LoginPage
   ],
   providers: [
     StatusBar,
