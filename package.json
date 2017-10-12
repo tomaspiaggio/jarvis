@@ -67,5 +67,8 @@
       "ios",
       "browser"
     ]
+  },
+  "config": {
+    "ionic_copy": "./node_modules/@ionic/app-scripts/config/copy.config.js"
   }
 }

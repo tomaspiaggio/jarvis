@@ -11,6 +11,7 @@ import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import {NativeStorage} from "@ionic-native/native-storage";
 import {HTTP} from "@ionic-native/http";
+// declare var JSEncrypt: any;
 
 @NgModule({
   declarations: [
@@ -21,7 +22,7 @@ import {HTTP} from "@ionic-native/http";
   ],
   imports: [
     BrowserModule,
-    IonicModule.forRoot(MyApp),
+    IonicModule.forRoot(MyApp)
   ],
   bootstrap: [IonicApp],
   entryComponents: [

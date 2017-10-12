@@ -1,8 +1,8 @@
 import {Injectable} from "@angular/core";
-import {HTTP} from "@ionic-native/http";
 import {NativeStorage} from "@ionic-native/native-storage";
 import {Spending} from "../model/spending.model";
 import {Observable} from "rxjs";
+import {EncryptedHttpService} from "./encrypted-http.service";
 /**
  * Created by Tomas on 10/10/17.
  */
@@ -10,7 +10,7 @@ import {Observable} from "rxjs";
 @Injectable()
 export class SpendingService {
 
-  constructor(private http: HTTP,
+  constructor(private http: EncryptedHttpService,
               private storage: NativeStorage) {
   }
 
